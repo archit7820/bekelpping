@@ -5,42 +5,18 @@ import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { router } from 'expo-router';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withSpring,
-  withTiming,
-  interpolate
-} from 'react-native-reanimated';
 import React from 'react';
 
 export default function SettingsModal() {
   const insets = useSafeAreaInsets();
-  const slideAnim = useSharedValue(0);
-
-  React.useEffect(() => {
-    slideAnim.value = withSpring(1, {
-      damping: 15,
-      stiffness: 100,
-    });
-  }, []);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(slideAnim.value),
-    transform: [
-      {
-        translateY: interpolate(slideAnim.value, [0, 1], [50, 0])
-      }
-    ]
-  }));
 
   const SettingsSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <Animated.View style={animatedStyle}>
+    <View>
       <ThemedView style={styles.section}>
         <ThemedText type="subtitle" style={styles.sectionTitle}>{title}</ThemedText>
         {children}
       </ThemedView>
-    </Animated.View>
+    </View>
   );
 
   const SettingsItem = ({ 

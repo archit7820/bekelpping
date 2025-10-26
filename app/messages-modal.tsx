@@ -5,34 +5,10 @@ import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { router } from 'expo-router';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withSpring,
-  withTiming,
-  interpolate
-} from 'react-native-reanimated';
 import React from 'react';
 
 export default function MessagesModal() {
   const insets = useSafeAreaInsets();
-  const slideAnim = useSharedValue(0);
-
-  React.useEffect(() => {
-    slideAnim.value = withSpring(1, {
-      damping: 15,
-      stiffness: 100,
-    });
-  }, []);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(slideAnim.value),
-    transform: [
-      {
-        translateY: interpolate(slideAnim.value, [0, 1], [50, 0])
-      }
-    ]
-  }));
 
   const conversations = [
     { id: '1', name: 'John Doe', lastMessage: 'Hey! How are you doing?', time: '2m', unread: 2 },
@@ -42,7 +18,7 @@ export default function MessagesModal() {
   ];
 
   const ConversationItem = ({ item }: { item: typeof conversations[0] }) => (
-    <Animated.View style={animatedStyle}>
+    <View>
       <TouchableOpacity style={styles.conversationItem}>
         <ThemedView style={styles.avatar}>
           <ThemedText style={styles.avatarText}>👤</ThemedText>
@@ -66,7 +42,7 @@ export default function MessagesModal() {
           </ThemedView>
         </ThemedView>
       </TouchableOpacity>
-    </Animated.View>
+    </View>
   );
 
   return (
