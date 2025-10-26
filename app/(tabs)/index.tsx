@@ -1,98 +1,178 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
+import { ScrollView, StyleSheet, Platform, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { BlurView } from 'expo-blur';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const insets = useSafeAreaInsets();
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
+  const PostItem = ({ username, content, likes, time }: {
+    username: string;
+    content: string;
+    likes: number;
+    time: string;
+  }) => (
+    <ThemedView style={styles.postItem}>
+      <ThemedView style={styles.postHeader}>
+        <ThemedView style={styles.avatar}>
+          <ThemedText style={styles.avatarText}>👤</ThemedText>
+        </ThemedView>
+        <ThemedView style={styles.postInfo}>
+          <ThemedText type="defaultSemiBold">{username}</ThemedText>
+          <ThemedText style={styles.timeText}>{time}</ThemedText>
+        </ThemedView>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
+      
+      <ThemedText style={styles.postContent}>{content}</ThemedText>
+      
+      <ThemedView style={styles.postActions}>
+        <TouchableOpacity style={styles.actionButton}>
+          <IconSymbol name="heart" size={20} color="#FF3B30" />
+          <ThemedText style={styles.actionText}>{likes}</ThemedText>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.actionButton}>
+          <IconSymbol name="message" size={20} color="#007AFF" />
+          <ThemedText style={styles.actionText}>Reply</ThemedText>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.actionButton}>
+          <IconSymbol name="paperplane.fill" size={20} color="#34C759" />
+          <ThemedText style={styles.actionText}>Share</ThemedText>
+        </TouchableOpacity>
       </ThemedView>
-    </ParallaxScrollView>
+    </ThemedView>
+  );
+
+  return (
+    <ThemedView style={styles.container}>
+      <BlurView intensity={20} style={[styles.header, { paddingTop: insets.top }]}>
+        <ThemedText type="title" style={styles.headerTitle}>Home</ThemedText>
+        <TouchableOpacity style={styles.addButton}>
+          <IconSymbol name="plus.circle.fill" size={28} color="#007AFF" />
+        </TouchableOpacity>
+      </BlurView>
+      
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <PostItem 
+          username="john_doe"
+          content="Just finished building an amazing React Native app with glassmorphism design! 🚀 The iOS-style navigation feels so smooth and modern."
+          likes={42}
+          time="2h"
+        />
+        
+        <PostItem 
+          username="design_lover"
+          content="The new iOS design patterns are absolutely gorgeous! Love how clean and minimal everything looks with the blur effects."
+          likes={28}
+          time="4h"
+        />
+        
+        <PostItem 
+          username="mobile_dev"
+          content="Expo 51+ features are incredible! The development experience keeps getting better and better. What's your favorite new feature?"
+          likes={67}
+          time="6h"
+        />
+        
+        <PostItem 
+          username="ui_enthusiast"
+          content="Glassmorphism + React Native = ❤️ The depth and visual hierarchy you can achieve is amazing!"
+          likes={91}
+          time="8h"
+        />
+        
+        <ThemedView style={styles.bottomSpacer} />
+      </ScrollView>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+  },
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Platform.OS === 'ios' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+  },
+  headerTitle: {
+    fontSize: 34,
+    fontWeight: Platform.OS === 'ios' ? '700' : 'bold',
+    fontFamily: Platform.OS === 'ios' ? 'San Francisco' : 'System',
+  },
+  addButton: {
+    marginBottom: 4,
+  },
+  content: {
+    flex: 1,
+    paddingTop: 120,
+    paddingHorizontal: 20,
+  },
+  postItem: {
+    padding: 16,
+    marginBottom: 16,
+    borderRadius: 16,
+    backgroundColor: Platform.OS === 'ios' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+    borderWidth: 1,
+    borderColor: Platform.OS === 'ios' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+  },
+  postHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    marginBottom: 12,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Platform.OS === 'ios' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  avatarText: {
+    fontSize: 16,
+  },
+  postInfo: {
+    flex: 1,
+  },
+  timeText: {
+    fontSize: 12,
+    opacity: 0.6,
+    marginTop: 2,
+  },
+  postContent: {
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  postActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: 12,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: Platform.OS === 'ios' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+  },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  actionText: {
+    fontSize: 14,
+    fontWeight: Platform.OS === 'ios' ? '500' : 'normal',
+  },
+  bottomSpacer: {
+    height: 100,
   },
 });

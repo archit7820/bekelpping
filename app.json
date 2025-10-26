@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "bekelpping",
-    "slug": "bekelpping",
+    "slug": "bekelp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -43,6 +43,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a846972d-c898-4bfc-abae-0b8530db661a"
+      }
+    },
+    "owner": "archityadav2025"
   }
 }

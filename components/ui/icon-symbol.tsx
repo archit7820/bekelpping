@@ -18,6 +18,28 @@ const MAPPING = {
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  // Social media app icons
+  'person.circle': 'person',
+  'person.fill': 'person',
+  'gear': 'settings',
+  'gearshape.fill': 'settings',
+  'rectangle.stack': 'dynamic-feed',
+  'rectangle.stack.fill': 'view-list',
+  'heart': 'favorite-border',
+  'heart.fill': 'favorite',
+  'message': 'chat-bubble-outline',
+  'message.fill': 'chat',
+  'plus.circle': 'add-circle',
+  'plus.circle.fill': 'add-circle',
+  'magnifyingglass': 'search',
+  'lock.shield': 'security',
+  'bell': 'notifications',
+  'paintbrush': 'palette',
+  'globe': 'public',
+  'internaldrive': 'storage',
+  'questionmark.circle': 'help',
+  'envelope': 'email',
+  'info.circle': 'info',
 } as IconMapping;
 
 /**
