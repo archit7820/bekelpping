@@ -8,7 +8,7 @@ import { SwipeTabWrapper } from '@/components/swipe-tab-wrapper';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
-  const tabRoutes = ['index', 'feeds', 'explore', 'profile', 'settings'];
+  const tabRoutes = ['index', 'feeds', 'communities', 'camera', 'profile'];
 
   const PostItem = ({ username, content, likes, time }: {
     username: string;
@@ -51,9 +51,14 @@ export default function HomeScreen() {
       <ThemedView style={styles.container}>
       <BlurView intensity={20} style={[styles.header, { paddingTop: insets.top }]}>
         <ThemedText type="title" style={styles.headerTitle}>Home</ThemedText>
-        <TouchableOpacity style={styles.addButton}>
-          <IconSymbol name="plus.circle.fill" size={28} color="#007AFF" />
-        </TouchableOpacity>
+        <ThemedView style={styles.headerButtons}>
+          <TouchableOpacity style={styles.messageButton}>
+            <IconSymbol name="message.fill" size={26} color="#007AFF" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.addButton}>
+            <IconSymbol name="plus.circle.fill" size={28} color="#007AFF" />
+          </TouchableOpacity>
+        </ThemedView>
       </BlurView>
       
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -114,6 +119,14 @@ const styles = StyleSheet.create({
     fontSize: 34,
     fontWeight: Platform.OS === 'ios' ? '700' : 'bold',
     fontFamily: Platform.OS === 'ios' ? 'San Francisco' : 'System',
+  },
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  messageButton: {
+    marginBottom: 4,
   },
   addButton: {
     marginBottom: 4,

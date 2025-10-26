@@ -7,7 +7,7 @@ import { SwipeTabWrapper } from '@/components/swipe-tab-wrapper';
 
 export default function FeedsScreen() {
   const insets = useSafeAreaInsets();
-  const tabRoutes = ['index', 'feeds', 'explore', 'profile', 'settings'];
+  const tabRoutes = ['index', 'feeds', 'communities', 'camera', 'profile'];
 
   return (
     <SwipeTabWrapper currentTabIndex={1} tabRoutes={tabRoutes}>

@@ -40,6 +40,14 @@ const MAPPING = {
   'questionmark.circle': 'help',
   'envelope': 'email',
   'info.circle': 'info',
+  'person.3.fill': 'group',
+  'camera.fill': 'camera-alt',
+  'camera': 'camera-alt',
+  'bolt': 'flash-on',
+  'timer': 'timer',
+  'camera.filters': 'filter',
+  'photo.on.rectangle': 'photo-library',
+  'arrow.triangle.2.circlepath.camera': 'flip-camera-ios',
 } as IconMapping;
 
 /**
