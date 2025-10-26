@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { BlurView } from 'expo-blur';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -12,7 +13,8 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <Tabs
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Tabs
       screenOptions={{
         tabBarActiveTintColor: '#007AFF', // iOS blue
         tabBarInactiveTintColor: Colors[colorScheme ?? 'light'].tabIconDefault,
@@ -112,5 +114,6 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+    </GestureHandlerRootView>
   );
 }

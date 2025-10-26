@@ -5,10 +5,12 @@ import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useState } from 'react';
+import { SwipeTabWrapper } from '@/components/swipe-tab-wrapper';
 
 export default function ExploreScreen() {
   const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState('');
+  const tabRoutes = ['index', 'feeds', 'explore', 'profile', 'settings'];
 
   const TrendingItem = ({ hashtag, posts, category }: {
     hashtag: string;
@@ -47,7 +49,8 @@ export default function ExploreScreen() {
   );
 
   return (
-    <ThemedView style={styles.container}>
+    <SwipeTabWrapper currentTabIndex={2} tabRoutes={tabRoutes}>
+      <ThemedView style={styles.container}>
       <BlurView intensity={20} style={[styles.header, { paddingTop: insets.top }]}>
         <ThemedText type="title" style={styles.headerTitle}>Explore</ThemedText>
         
@@ -117,6 +120,7 @@ export default function ExploreScreen() {
         <ThemedView style={styles.bottomSpacer} />
       </ScrollView>
     </ThemedView>
+    </SwipeTabWrapper>
   );
 }
 

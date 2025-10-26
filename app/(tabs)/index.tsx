@@ -4,9 +4,11 @@ import { ThemedView } from '@/components/themed-view';
 import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { SwipeTabWrapper } from '@/components/swipe-tab-wrapper';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
+  const tabRoutes = ['index', 'feeds', 'explore', 'profile', 'settings'];
 
   const PostItem = ({ username, content, likes, time }: {
     username: string;
@@ -45,7 +47,8 @@ export default function HomeScreen() {
   );
 
   return (
-    <ThemedView style={styles.container}>
+    <SwipeTabWrapper currentTabIndex={0} tabRoutes={tabRoutes}>
+      <ThemedView style={styles.container}>
       <BlurView intensity={20} style={[styles.header, { paddingTop: insets.top }]}>
         <ThemedText type="title" style={styles.headerTitle}>Home</ThemedText>
         <TouchableOpacity style={styles.addButton}>
@@ -85,6 +88,7 @@ export default function HomeScreen() {
         <ThemedView style={styles.bottomSpacer} />
       </ScrollView>
     </ThemedView>
+    </SwipeTabWrapper>
   );
 }
 

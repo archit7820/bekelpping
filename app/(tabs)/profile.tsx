@@ -3,12 +3,15 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SwipeTabWrapper } from '@/components/swipe-tab-wrapper';
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
+  const tabRoutes = ['index', 'feeds', 'explore', 'profile', 'settings'];
 
   return (
-    <ThemedView style={styles.container}>
+    <SwipeTabWrapper currentTabIndex={3} tabRoutes={tabRoutes}>
+      <ThemedView style={styles.container}>
       <BlurView intensity={20} style={[styles.header, { paddingTop: insets.top }]}>
         <ThemedText type="title" style={styles.headerTitle}>Profile</ThemedText>
       </BlurView>
@@ -43,6 +46,7 @@ export default function ProfileScreen() {
         </ThemedView>
       </ScrollView>
     </ThemedView>
+    </SwipeTabWrapper>
   );
 }
 
