@@ -5,10 +5,15 @@ import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { SwipeTabWrapper } from '@/components/swipe-tab-wrapper';
+import { router } from 'expo-router';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const tabRoutes = ['index', 'feeds', 'communities', 'camera', 'profile'];
+
+  const handleMessagesPress = () => {
+    router.push('/messages-modal');
+  };
 
   const PostItem = ({ username, content, likes, time }: {
     username: string;
@@ -52,7 +57,7 @@ export default function HomeScreen() {
       <BlurView intensity={20} style={[styles.header, { paddingTop: insets.top }]}>
         <ThemedText type="title" style={styles.headerTitle}>Home</ThemedText>
         <ThemedView style={styles.headerButtons}>
-          <TouchableOpacity style={styles.messageButton}>
+          <TouchableOpacity style={styles.messageButton} onPress={handleMessagesPress}>
             <IconSymbol name="message.fill" size={26} color="#007AFF" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.addButton}>

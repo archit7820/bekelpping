@@ -5,6 +5,7 @@ import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { SwipeTabWrapper } from '@/components/swipe-tab-wrapper';
+import { router } from 'expo-router';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
@@ -36,8 +37,7 @@ export default function ProfileScreen() {
   }));
 
   const handleSettingsPress = () => {
-    console.log('Settings pressed');
-    // Navigate to settings modal or screen
+    router.push('/settings-modal');
   };
 
   return (

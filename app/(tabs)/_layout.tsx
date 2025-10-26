@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -11,6 +11,28 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const [isCameraActive, setIsCameraActive] = useState(false);
+
+  // Listen for camera state changes
+  useEffect(() => {
+    const handleCameraState = (active: boolean) => setIsCameraActive(active);
+    
+    // Subscribe to global camera state
+    if (global.cameraStateListeners) {
+      global.cameraStateListeners.push(handleCameraState);
+    } else {
+      global.cameraStateListeners = [handleCameraState];
+    }
+
+    return () => {
+      if (global.cameraStateListeners) {
+        const index = global.cameraStateListeners.indexOf(handleCameraState);
+        if (index > -1) {
+          global.cameraStateListeners.splice(index, 1);
+        }
+      }
+    };
+  }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -20,7 +42,7 @@ export default function TabLayout() {
         tabBarInactiveTintColor: Colors[colorScheme ?? 'light'].tabIconDefault,
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarStyle: {
+        tabBarStyle: isCameraActive ? { display: 'none' } : {
           position: 'absolute',
           bottom: 0,
           left: 0,
