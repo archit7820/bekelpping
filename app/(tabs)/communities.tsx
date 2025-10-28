@@ -61,32 +61,30 @@ export default function CommunitiesScreen() {
     }));
 
     return (
-      <Animated.View style={[cardAnimatedStyle, animatedStyle]}>
-        <TouchableOpacity style={styles.communityCard} onPress={handlePress}>
-          <ThemedView style={styles.communityHeader}>
-            <ThemedView style={styles.communityAvatar}>
-              <ThemedText style={styles.communityEmoji}>{image}</ThemedText>
-            </ThemedView>
-            <ThemedView style={styles.communityInfo}>
-              <ThemedText type="defaultSemiBold" style={styles.communityName}>
-                {name}
-              </ThemedText>
-              <ThemedText style={styles.memberCount}>{members} members</ThemedText>
-            </ThemedView>
-            <TouchableOpacity 
-              style={[styles.joinButton, isJoined && styles.joinedButton]}
-            >
-              <ThemedText style={[styles.joinButtonText, isJoined && styles.joinedButtonText]}>
-                {isJoined ? 'Joined' : 'Join'}
-              </ThemedText>
-            </TouchableOpacity>
+      <TouchableOpacity style={styles.communityCard} onPress={handlePress}>
+        <ThemedView style={styles.communityHeader}>
+          <ThemedView style={styles.communityAvatar}>
+            <ThemedText style={styles.communityEmoji}>{image}</ThemedText>
           </ThemedView>
-          
-          <ThemedText style={styles.communityDescription}>
-            {description}
-          </ThemedText>
-        </TouchableOpacity>
-      </Animated.View>
+          <ThemedView style={styles.communityInfo}>
+            <ThemedText type="defaultSemiBold" style={styles.communityName}>
+              {name}
+            </ThemedText>
+            <ThemedText style={styles.memberCount}>{members} members</ThemedText>
+          </ThemedView>
+          <TouchableOpacity 
+            style={[styles.joinButton, isJoined && styles.joinedButton]}
+          >
+            <ThemedText style={[styles.joinButtonText, isJoined && styles.joinedButtonText]}>
+              {isJoined ? 'Joined' : 'Join'}
+            </ThemedText>
+          </TouchableOpacity>
+        </ThemedView>
+        
+        <ThemedText style={styles.communityDescription}>
+          {description}
+        </ThemedText>
+      </TouchableOpacity>
     );
   };
 

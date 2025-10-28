@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "bekelpping",
-    "slug": "bekelp",
+    "name": "Impactify",
+    "slug": "impactify",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "bekelpping",
+    "scheme": "impactify",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

@@ -86,24 +86,11 @@ export default function TabLayout() {
       <Tabs.Screen
         name="feeds"
         options={{
-          title: 'Feeds',
+          title: 'Feed',
           tabBarIcon: ({ color, focused }) => (
             <IconSymbol 
               size={focused ? 30 : 26} 
               name="rectangle.stack.fill" 
-              color={color} 
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="communities"
-        options={{
-          title: 'Communities',
-          tabBarIcon: ({ color, focused }) => (
-            <IconSymbol 
-              size={focused ? 30 : 26} 
-              name="person.3.fill" 
               color={color} 
             />
           ),
@@ -123,13 +110,26 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="communities"
+        options={{
+          title: 'Friends',
+          tabBarIcon: ({ color, focused }) => (
+            <IconSymbol 
+              size={focused ? 30 : 26} 
+              name="person.2.fill" 
+              color={color} 
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
           tabBarIcon: ({ color, focused }) => (
             <IconSymbol 
               size={focused ? 30 : 26} 
-              name="person.fill" 
+              name="person.circle.fill" 
               color={color} 
             />
           ),

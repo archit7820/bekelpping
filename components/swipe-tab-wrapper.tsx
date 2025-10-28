@@ -38,51 +38,14 @@ export function SwipeTabWrapper({ children, currentTabIndex, tabRoutes }: SwipeT
     }
   };
 
+  // Disable swipe gestures to prevent navigation issues
   const panGesture = Gesture.Pan()
-    .onStart(() => {
-      // Light haptic feedback on gesture start
-      if (Platform.OS === 'ios') {
-        runOnJS(Haptics.selectionAsync)();
-      }
-    })
-    .onUpdate((event) => {
-      translateX.value = event.translationX;
-      
-      // Reduce opacity slightly during swipe for visual feedback
-      const progress = Math.abs(event.translationX) / SCREEN_WIDTH;
-      opacity.value = Math.max(0.85, 1 - progress * 0.15);
-    })
-    .onEnd((event) => {
-      const { translationX, velocityX } = event;
-      
-      // Determine if swipe was significant enough to navigate
-      const shouldNavigate = Math.abs(translationX) > SWIPE_THRESHOLD || Math.abs(velocityX) > 500;
-      
-      if (shouldNavigate) {
-        if (translationX > 0 && currentTabIndex > 0) {
-          // Swipe right - go to previous tab
-          runOnJS(navigateToTab)('left');
-        } else if (translationX < 0 && currentTabIndex < tabRoutes.length - 1) {
-          // Swipe left - go to next tab
-          runOnJS(navigateToTab)('right');
-        }
-      }
-      
-      // Reset animation values
-      translateX.value = withSpring(0, {
-        damping: 20,
-        stiffness: 300,
-      });
-      opacity.value = withSpring(1, {
-        damping: 20,
-        stiffness: 300,
-      });
-    });
+    .enabled(false); // Completely disable swipe navigation
 
+  // No animation since swipe is disabled
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ translateX: translateX.value * 0.1 }], // Subtle movement
-      opacity: opacity.value,
+      opacity: 1, // Always fully visible
     };
   });
 

@@ -18,9 +18,20 @@ const MAPPING = {
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  // Dashboard & Analytics icons
+  'chart.bar.fill': 'bar-chart',
+  'chart.line.uptrend.xyaxis': 'trending-up',
+  'chart.pie.fill': 'pie-chart',
+  'star.fill': 'star',
+  'star': 'star-border',
+  'flame.fill': 'trending-up',
+  'trophy.fill': 'emoji-events',
   // Social media app icons
   'person.circle': 'person',
+  'person.circle.fill': 'account-circle',
   'person.fill': 'person',
+  'person.2.fill': 'people',
+  'person.3.fill': 'group',
   'gear': 'settings',
   'gearshape.fill': 'settings',
   'rectangle.stack': 'dynamic-feed',
@@ -40,7 +51,6 @@ const MAPPING = {
   'questionmark.circle': 'help',
   'envelope': 'email',
   'info.circle': 'info',
-  'person.3.fill': 'group',
   'camera.fill': 'camera-alt',
   'camera': 'camera-alt',
   'bolt': 'flash-on',
@@ -48,6 +58,11 @@ const MAPPING = {
   'camera.filters': 'filter',
   'photo.on.rectangle': 'photo-library',
   'arrow.triangle.2.circlepath.camera': 'flip-camera-ios',
+  // Share and interaction icons
+  'square.and.arrow.up': 'share',
+  'ellipsis': 'more-horiz',
+  'bookmark': 'bookmark-border',
+  'bookmark.fill': 'bookmark',
 } as IconMapping;
 
 /**

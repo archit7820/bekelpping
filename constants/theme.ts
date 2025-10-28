@@ -5,25 +5,52 @@
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
+const tintColorLight = '#007AFF'; // iOS blue
 const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
+    text: '#1C1C1E',
+    background: '#F2F2F7', // iOS light gray background
+    cardBackground: '#FFFFFF',
     tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
+    icon: '#8E8E93',
+    tabIconDefault: '#8E8E93',
     tabIconSelected: tintColorLight,
+    border: '#C6C6C8',
+    separator: '#E5E5EA',
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
+    text: '#FFFFFF',
+    background: '#000000',
+    cardBackground: '#1C1C1E',
     tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
+    icon: '#8E8E93',
+    tabIconDefault: '#8E8E93',
     tabIconSelected: tintColorDark,
+    border: '#38383A',
+    separator: '#38383A',
+  },
+};
+
+// Impact Score color gradients (0-40 red, 40-70 orange, 70-100 green)
+export const ImpactColors = {
+  low: {
+    start: '#FF3B30', // iOS red
+    end: '#FF6B6B',
+  },
+  medium: {
+    start: '#FF9500', // iOS orange
+    end: '#FFB340',
+  },
+  high: {
+    start: '#30D158', // iOS green
+    end: '#32D74B',
+  },
+  gradient: (score: number) => {
+    if (score <= 40) return ImpactColors.low;
+    if (score <= 70) return ImpactColors.medium;
+    return ImpactColors.high;
   },
 };
 
