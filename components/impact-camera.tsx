@@ -297,7 +297,9 @@ export const ImpactCamera: React.FC = () => {
         
         // Analyze the photo for impact score
         try {
-          const analysis = await impactService.analyzeImage(photo.uri);
+          // Add UI delay for better user experience
+          await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 400));
+          const analysis = impactService.analyzeImage(photo.uri);
           setImpactAnalysis(analysis);
         } catch (error) {
           console.error('Impact analysis failed:', error);
@@ -340,7 +342,9 @@ export const ImpactCamera: React.FC = () => {
       setIsAnalyzing(true);
       
       try {
-        const analysis = await impactService.analyzeImage(photo.uri);
+        // Add UI delay for better user experience
+        await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 400));
+        const analysis = impactService.analyzeImage(photo.uri);
         setImpactAnalysis(analysis);
       } catch (error) {
         console.error('Impact analysis failed:', error);

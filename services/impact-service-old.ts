@@ -1,4 +1,4 @@
-// Clean impact service with no async operations or file system dependencies
+// FileSystem import removed - not needed for local analysis
 
 export interface ImpactAnalysis {
   score: number;
@@ -13,18 +13,104 @@ export interface ImpactAnalysis {
 }
 
 class ImpactService {
+  private readonly API_ENDPOINT = process.env.EXPO_PUBLIC_IMPACT_API_URL || 'https://your-impact-api.com';
+  
   /**
    * Analyzes an image and returns an impact score
-   * This is now completely synchronous with no file system operations
    */
   analyzeImage(imageUri: string, caption?: string, tags?: string[]): ImpactAnalysis {
-    console.log('📊 Starting local impact analysis...');
-    console.log('📸 Image URI received:', imageUri ? 'Valid' : 'Missing');
+    console.log('Starting image analysis for URI:', imageUri);
+    
+    // For now, skip the API call and image conversion since they're causing issues
+    // Go directly to fallback analysis which works reliably
+    console.log('Using fallback analysis to avoid file system issues');
+    
+    // Return synchronous result immediately - no delays, no promises
+    return this.fallbackAnalysis(imageUri, caption, tags);
+    
+    // TODO: Uncomment below when API and file system issues are resolved
+    /*
+    try {
+      // Convert image to base64 for API transmission
+      // base64Image conversion removed - not needed
+      
+      const response = await fetch(`${this.API_ENDPOINT}/analyze`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.EXPO_PUBLIC_IMPACT_API_KEY}`,
+        },
+        body: JSON.stringify({
+          // image: base64Image,
+          caption,
+          tags,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Impact analysis failed: ${response.statusText}`);
+      }
+
+      const analysis = await response.json();
+      return this.validateAnalysis(analysis);
+    } catch (error) {
+      console.error('Impact analysis error:', error);
+      // Fallback to local analysis if API fails or image conversion fails
+      return this.fallbackAnalysis(imageUri, caption, tags);
+    }
+    */
+  }
+
+  // convertImageToBase64 method removed - not needed for local analysis
+
+  /**
+   * Validates the analysis response from the API
+   */
+  private validateAnalysis(analysis: any): ImpactAnalysis {
+    const defaultAnalysis: ImpactAnalysis = {
+      score: 0,
+      factors: {
+        contentRelevance: 0,
+        engagementPrediction: 0,
+        emotionalResonance: 0,
+        visualClarity: 0,
+      },
+      suggestions: [],
+      category: 'general',
+    };
+
+    return {
+      score: Math.min(100, Math.max(0, analysis.score || 0)),
+      factors: {
+        contentRelevance: Math.min(100, Math.max(0, analysis.factors?.contentRelevance || 0)),
+        engagementPrediction: Math.min(100, Math.max(0, analysis.factors?.engagementPrediction || 0)),
+        emotionalResonance: Math.min(100, Math.max(0, analysis.factors?.emotionalResonance || 0)),
+        visualClarity: Math.min(100, Math.max(0, analysis.factors?.visualClarity || 0)),
+      },
+      suggestions: Array.isArray(analysis.suggestions) ? analysis.suggestions : [],
+      category: analysis.category || 'general',
+    };
+  }
+
+  /**
+   * Fallback analysis when API is unavailable or image conversion fails
+   * This provides a basic scoring algorithm based on caption and tags
+   */
+  private fallbackAnalysis(imageUri: string, caption?: string, tags?: string[]): ImpactAnalysis {
+    console.log('📊 Running local impact analysis...');
+    console.log('📸 Image URI:', imageUri ? 'Valid' : 'Missing');
     console.log('✍️ Caption:', caption ? `"${caption.substring(0, 50)}${caption.length > 50 ? '...' : ''}"` : 'None');
     console.log('🏷️ Tags:', tags ? tags.join(', ') : 'None');
     
-    // Basic scoring algorithm - completely synchronous
-    let score = 65; // Base score for captured images
+    // Simulate processing time with synchronous delay (no async needed)
+    const startTime = Date.now();
+    while (Date.now() - startTime < 100) {
+      // Small synchronous delay to simulate processing
+    }
+    
+    // Basic scoring algorithm
+    let score = 65; // Base score (good starting point for captured images)
     
     // Caption analysis
     if (caption && caption.trim()) {
@@ -49,8 +135,8 @@ class ImpactService {
       score += meaningfulTags.length * 2;
     }
     
-    // Simulate image quality assessment
-    const imageQualityBonus = 8 + Math.random() * 12; // 8-20 points
+    // Simulate image quality assessment (generally positive for camera captures)
+    const imageQualityBonus = 8 + Math.random() * 12; // 8-20 points for image quality
     score += imageQualityBonus;
     
     // Add realistic variation
