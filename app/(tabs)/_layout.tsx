@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -8,41 +8,21 @@ import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useCameraState } from '@/hooks/use-camera-state';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const [isCameraActive, setIsCameraActive] = useState(false);
-
-  // Listen for camera state changes
-  useEffect(() => {
-    const handleCameraState = (active: boolean) => setIsCameraActive(active);
-    
-    // Subscribe to global camera state
-    if (global.cameraStateListeners) {
-      global.cameraStateListeners.push(handleCameraState);
-    } else {
-      global.cameraStateListeners = [handleCameraState];
-    }
-
-    return () => {
-      if (global.cameraStateListeners) {
-        const index = global.cameraStateListeners.indexOf(handleCameraState);
-        if (index > -1) {
-          global.cameraStateListeners.splice(index, 1);
-        }
-      }
-    };
-  }, []);
+  const { isActive: isCameraActive } = useCameraState();
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Tabs
-      screenOptions={{
+      screenOptions={({ route }) => ({
         tabBarActiveTintColor: '#007AFF', // iOS blue
         tabBarInactiveTintColor: Colors[colorScheme ?? 'light'].tabIconDefault,
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarStyle: isCameraActive ? { display: 'none' } : {
+        tabBarStyle: (isCameraActive || route.name === 'camera') ? { display: 'none' } : {
           position: 'absolute',
           bottom: 0,
           left: 0,
@@ -69,7 +49,8 @@ export default function TabLayout() {
         tabBarIconStyle: {
           marginTop: 4,
         },
-      }}>
+      })}
+      >
       <Tabs.Screen
         name="index"
         options={{

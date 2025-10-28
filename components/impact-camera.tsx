@@ -29,6 +29,7 @@ import Animated, {
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors, ImpactColors, Fonts } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useCameraState } from '@/hooks/use-camera-state';
 import { useImpactStore } from '@/stores/impact-store';
 import { impactService, ImpactAnalysis } from '@/services/impact-service';
 
@@ -228,44 +229,20 @@ export const ImpactCamera: React.FC = () => {
   const cameraRef = useRef<CameraView>(null);
   
   const { addPost, setLoading } = useImpactStore();
+  const { setCameraActive } = useCameraState();
   
   const scaleValue = useSharedValue(1);
   const rotateValue = useSharedValue(0);
 
   useEffect(() => {
-    // Set camera state listeners for tab bar visibility
-    if (global.cameraStateListeners) {
-      global.cameraStateListeners.forEach((listener: (active: boolean) => void) => 
-        listener(true)
-      );
-    }
+    // Set camera as active when component mounts to hide tab bar
+    setCameraActive(true);
 
     // Cleanup function to restore tab bar when component unmounts
     return () => {
-      if (global.cameraStateListeners) {
-        global.cameraStateListeners.forEach((listener: (active: boolean) => void) => 
-          listener(false)
-        );
-      }
+      setCameraActive(false);
     };
-  }, []);
-
-  // Additional effect to handle app state changes and ensure tab bar restoration
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      // If component is still mounted and app becomes hidden, restore tab bar
-      if (document.hidden && global.cameraStateListeners) {
-        global.cameraStateListeners.forEach((listener: (active: boolean) => void) => 
-          listener(false)
-        );
-      }
-    };
-
-    if (typeof document !== 'undefined') {
-      document.addEventListener('visibilitychange', handleVisibilityChange);
-      return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-    }
-  }, []);
+  }, [setCameraActive]);
 
   const animatedCaptureStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scaleValue.value }],
@@ -420,11 +397,7 @@ export const ImpactCamera: React.FC = () => {
         style={styles.backButton}
         onPress={() => {
           // Restore tab bar visibility before navigating back
-          if (global.cameraStateListeners) {
-            global.cameraStateListeners.forEach((listener: (active: boolean) => void) => 
-              listener(false)
-            );
-          }
+          setCameraActive(false);
           router.back();
         }}
       >

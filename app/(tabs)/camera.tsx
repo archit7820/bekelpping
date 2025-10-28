@@ -1,25 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ImpactCamera } from '@/components/impact-camera';
 import { SwipeTabWrapper } from '@/components/swipe-tab-wrapper';
+import { useCameraState } from '@/hooks/use-camera-state';
 
 export default function CameraScreen() {
   const insets = useSafeAreaInsets();
   const tabRoutes = ['index', 'feeds', 'camera', 'communities', 'profile'];
+  const { setCameraActive } = useCameraState();
 
-  // Ensure tab bar is restored when leaving camera screen
-  React.useEffect(() => {
+  // Ensure camera state is set when screen loads
+  useEffect(() => {
+    setCameraActive(true);
+    
     return () => {
-      // When this component unmounts (user navigates away), restore tab bar
-      if (global.cameraStateListeners) {
-        global.cameraStateListeners.forEach((listener: (active: boolean) => void) => 
-          listener(false)
-        );
-      }
+      setCameraActive(false);
     };
-  }, []);
+  }, [setCameraActive]);
 
   return (
     <SwipeTabWrapper currentTabIndex={2} tabRoutes={tabRoutes}>
