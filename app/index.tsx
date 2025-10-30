@@ -1,94 +1,63 @@
-import { useEffect } from 'react';
-import { router } from 'expo-router';
-import { View, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-  withSequence,
-} from 'react-native-reanimated';
+import { router } from 'expo-router';
+import { useEffect } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { useAuth } from '@/hooks/use-auth';
 
-export default function IndexScreen() {
-  const logoScale = useSharedValue(0);
-  const logoRotation = useSharedValue(0);
+export default function SplashScreen() {
+  const opacity = useSharedValue(0);
+  const { isAuthenticated, hasCompletedOnboarding, isLoading } = useAuth();
 
   useEffect(() => {
-    // Animate logo entrance
-    logoScale.value = withSpring(1, { damping: 8 });
-    logoRotation.value = withSequence(
-      withTiming(360, { duration: 1000 }),
-      withTiming(0, { duration: 0 })
-    );
+    // Simple fade-in animation
+    opacity.value = withTiming(1, { duration: 1000 });
 
-    // Check authentication status and navigate
+    // Wait for animation and then route based on auth state
     const timer = setTimeout(() => {
-      // For demo purposes, we'll assume user is not authenticated
-      // In a real app, you'd check authentication status here
-      const isAuthenticated = false; // This would come from your auth state
-      const hasCompletedOnboarding = false; // This would come from your storage
-
-      if (isAuthenticated) {
-        router.replace('/home');
-      } else if (hasCompletedOnboarding) {
-        router.replace('/(auth)/login');
+      if (isLoading) return; // Wait for auth check to complete
+      
+      if (isAuthenticated && hasCompletedOnboarding) {
+        // User has completed everything, go to main app
+        router.replace('/(tabs)');
+      } else if (isAuthenticated && !hasCompletedOnboarding) {
+        // User is logged in but hasn't completed onboarding
+        router.replace('/(auth)/preferences');
       } else {
+        // User is not authenticated, start onboarding
         router.replace('/(auth)/onboarding');
       }
-    }, 2000);
+    }, 2000); // Reduced time to 2 seconds
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [isAuthenticated, hasCompletedOnboarding, isLoading]);
 
-  const animatedLogoStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: logoScale.value },
-      { rotate: `${logoRotation.value}deg` },
-    ],
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
   }));
 
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#667eea', '#764ba2', '#f093fb']}
+        colors={['#667eea', '#764ba2']}
         style={styles.background}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       />
       
-      <View style={styles.content}>
-        <Animated.View style={[styles.logoContainer, animatedLogoStyle]}>
-          <LinearGradient
-            colors={['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.1)']}
-            style={styles.logoBackground}
-          >
-            <IconSymbol name="heart.fill" size={80} color="white" />
-          </LinearGradient>
-        </Animated.View>
-        
-        <Animated.Text style={[styles.title, animatedLogoStyle]}>
-          Impact
-        </Animated.Text>
-        <Animated.Text style={[styles.subtitle, animatedLogoStyle]}>
-          Making a difference, one step at a time
-        </Animated.Text>
-      </View>
+      <Animated.View style={[styles.content, animatedStyle ]}>
+        <Text style={styles.title}>Impact</Text>
+        <Text style={styles.subtitle}>Making a difference, one step at a time</Text>
+      </Animated.View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   background: {
     position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
+    left: 0, right: 0, top: 0, bottom: 0,
   },
   content: {
     flex: 1,
@@ -96,29 +65,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 40,
   },
-  logoContainer: {
-    marginBottom: 30,
-  },
-  logoBackground: {
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 3,
-    borderColor: 'rgba(255,255,255,0.3)',
-  },
   title: {
-    fontSize: 48,
+    fontSize: 42,
     fontWeight: 'bold',
     color: 'white',
-    marginBottom: 12,
-    textAlign: 'center',
+    marginBottom: 10,
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 16,
     color: 'rgba(255,255,255,0.9)',
     textAlign: 'center',
-    fontWeight: '500',
   },
 });

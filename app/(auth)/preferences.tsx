@@ -1,21 +1,20 @@
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { BlurView } from 'expo-blur';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
   ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { router } from 'expo-router';
 import Animated, {
   useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
   withDelay,
+  withTiming
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -66,24 +65,7 @@ const interestCategories = [
 
 export default function PreferencesScreen() {
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-  const [currentStep, setCurrentStep] = useState(0);
   const insets = useSafeAreaInsets();
-  
-  const contentOpacity = useSharedValue(0);
-  const buttonScale = useSharedValue(1);
-
-  React.useEffect(() => {
-    contentOpacity.value = withTiming(1, { duration: 800 });
-  }, []);
-
-  const animatedContentStyle = useAnimatedStyle(() => ({
-    opacity: contentOpacity.value,
-    transform: [{ translateY: withSpring(contentOpacity.value === 1 ? 0 : 50) }],
-  }));
-
-  const animatedButtonStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: buttonScale.value }],
-  }));
 
   const toggleInterest = (interest: string) => {
     setSelectedInterests(prev => 
@@ -98,34 +80,20 @@ export default function PreferencesScreen() {
       return;
     }
 
-    buttonScale.value = withSpring(0.95, {}, () => {
-      buttonScale.value = withSpring(1);
-    });
-
     // Navigate to main app
-    setTimeout(() => {
-      router.replace('/(tabs)');
-    }, 500);
+    router.replace('/(tabs)');
   };
 
   const InterestCard = ({ interest, categoryColor }: { interest: string, categoryColor: string }) => {
     const isSelected = selectedInterests.includes(interest);
-    const scale = useSharedValue(1);
-
-    const animatedCardStyle = useAnimatedStyle(() => ({
-      transform: [{ scale: scale.value }],
-    }));
 
     const handlePress = () => {
-      scale.value = withSpring(0.95, {}, () => {
-        scale.value = withSpring(1);
-      });
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       toggleInterest(interest);
     };
 
     return (
-      <Animated.View style={animatedCardStyle}>
-        <TouchableOpacity onPress={handlePress}>
+      <TouchableOpacity onPress={handlePress}>
           <BlurView 
             intensity={isSelected ? 25 : 15} 
             tint="light" 
@@ -146,43 +114,37 @@ export default function PreferencesScreen() {
               </View>
             )}
           </BlurView>
-        </TouchableOpacity>
-      </Animated.View>
+      </TouchableOpacity>
     );
   };
 
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#667eea', '#764ba2', '#f093fb', '#4ECDC4']}
+        colors={['#667eea', '#764ba2', '#f093fb', '#667eea']}
         style={styles.background}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       />
 
       {/* Header */}
-      <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <BlurView intensity={20} tint="light" style={styles.backButtonBlur}>
-            <IconSymbol name="arrow.left" size={24} color="white" />
-          </BlurView>
-        </TouchableOpacity>
+      <View style={[styles.header, { paddingTop: insets.top + 40 }]}>
+        <Text style={styles.headerTitle}>What interests you?</Text>
       </View>
 
-      <Animated.View style={[styles.content, animatedContentStyle]}>
+      {/* Description Section */}
+      <View style={styles.descriptionContainer}>
+        <Text style={styles.subtitle}>
+          Choose at least 3 areas you care about to personalize your impact journey
+        </Text>
+        <Text style={styles.counter}>
+          {selectedInterests.length} of {interestCategories.reduce((acc, cat) => acc + cat.interests.length, 0)} selected
+        </Text>
+      </View>
+
+      <View style={styles.content}>
         {/* Title Section */}
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>What interests you?</Text>
-          <Text style={styles.subtitle}>
-            Choose at least 3 areas you care about to personalize your impact journey
-          </Text>
-          <Text style={styles.counter}>
-            {selectedInterests.length} of {interestCategories.reduce((acc, cat) => acc + cat.interests.length, 0)} selected
-          </Text>
-        </View>
+      
 
         {/* Progress Bar */}
         <View style={styles.progressContainer}>
@@ -210,18 +172,18 @@ export default function PreferencesScreen() {
 
               React.useEffect(() => {
                 categoryOpacity.value = withDelay(categoryIndex * 100, withTiming(1, { duration: 600 }));
-                categoryTranslateY.value = withDelay(categoryIndex * 100, withSpring(0, { damping: 15 }));
+                categoryTranslateY.value = withDelay(categoryIndex * 100, withTiming(0, { duration: 400 }));
               }, []);
 
-              const animatedCategoryStyle = useAnimatedStyle(() => ({
-                opacity: categoryOpacity.value,
-                transform: [{ translateY: categoryTranslateY.value }],
-              }));
+              // const animatedCategoryStyle = useAnimatedStyle(() => ({
+              //   opacity: categoryOpacity.value,
+              //   transform: [{ translateY: categoryTranslateY.value }],
+              // }));
 
               return (
                 <Animated.View 
                   key={category.id}
-                  style={[styles.categoryContainer, animatedCategoryStyle]}
+                  style={[styles.categoryContainer]}
                 >
               {/* Category Header */}
               <View style={styles.categoryHeader}>
@@ -248,27 +210,25 @@ export default function PreferencesScreen() {
             return <CategoryAnimatedContainer key={category.id} />;
           })}
         </ScrollView>
-      </Animated.View>
+      </View>
 
       {/* Continue Button */}
       <View style={[styles.footer, { paddingBottom: insets.bottom + 20 }]}>
-        <Animated.View style={animatedButtonStyle}>
-          <TouchableOpacity
-            style={[
-              styles.continueButton,
-              { opacity: selectedInterests.length >= 3 ? 1 : 0.5 }
-            ]}
-            onPress={handleContinue}
-            disabled={selectedInterests.length < 3}
-          >
-            <BlurView intensity={25} tint="light" style={styles.continueButtonBlur}>
-              <Text style={styles.continueButtonText}>
-                Continue ({selectedInterests.length}/3 minimum)
-              </Text>
-              <IconSymbol name="arrow.right" size={20} color="white" />
-            </BlurView>
-          </TouchableOpacity>
-        </Animated.View>
+        <TouchableOpacity
+          style={[
+            styles.continueButton,
+            { opacity: selectedInterests.length >= 3 ? 1 : 0.5 }
+          ]}
+          onPress={handleContinue}
+          disabled={selectedInterests.length < 3}
+        >
+          <BlurView intensity={25} tint="light" style={styles.continueButtonBlur}>
+            <Text style={styles.continueButtonText}>
+              Continue ({selectedInterests.length}/3 minimum)
+            </Text>
+            <IconSymbol name="chevron.right" size={20} color="white" />
+          </BlurView>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -286,49 +246,41 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   header: {
-    paddingHorizontal: 20,
-  },
-  backButton: {
-    width: 44,
-    height: 44,
-  },
-  backButtonBlur: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
     alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+  },
+  headerTitle: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: 'white',
+    textAlign: 'center',
+    fontFamily: 'System',
+    letterSpacing: -0.5,
+  },
+  descriptionContainer: {
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    marginBottom: 32,
   },
   content: {
     flex: 1,
     paddingHorizontal: 20,
   },
-  titleContainer: {
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
   subtitle: {
-    fontSize: 16,
-    color: 'rgba(255,255,255,0.8)',
+    fontSize: 17,
+    color: 'rgba(255,255,255,0.85)',
     textAlign: 'center',
-    lineHeight: 22,
+    lineHeight: 24,
     marginBottom: 12,
+    fontFamily: 'System',
+    fontWeight: '400',
   },
   counter: {
-    fontSize: 14,
-    color: 'rgba(255,255,255,0.7)',
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.75)',
     fontWeight: '500',
+    fontFamily: 'System',
   },
   progressContainer: {
     marginBottom: 30,
@@ -365,9 +317,11 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   categoryTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '600',
     color: 'white',
+    fontFamily: 'System',
+    letterSpacing: -0.3,
   },
   interestsGrid: {
     flexDirection: 'row',
@@ -387,8 +341,9 @@ const styles = StyleSheet.create({
   },
   interestText: {
     color: 'rgba(255,255,255,0.9)',
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '500',
+    fontFamily: 'System',
   },
   checkmark: {
     width: 20,
@@ -416,8 +371,10 @@ const styles = StyleSheet.create({
   },
   continueButtonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '600',
     marginRight: 8,
+    fontFamily: 'System',
+    letterSpacing: -0.2,
   },
 });

@@ -78,15 +78,7 @@ export default function LoginScreen() {
       />
 
       {/* Header */}
-      <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <BlurView intensity={20} tint="light" style={styles.backButtonBlur}>
-            <IconSymbol name="arrow.left" size={24} color="white" />
-          </BlurView>
-        </TouchableOpacity>
+      <View style={[styles.header, { paddingTop: insets.top + 40 }]}>
       </View>
 
       <Animated.ScrollView 
@@ -230,30 +222,16 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   header: {
-    paddingHorizontal: 20,
-  },
-  backButton: {
-    width: 44,
-    height: 44,
-  },
-  backButtonBlur: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 24,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 30,
+    paddingHorizontal: 32,
   },
   logoContainer: {
     alignItems: 'center',
-    marginTop: 40,
-    marginBottom: 40,
+    marginTop: 20,
+    marginBottom: 48,
   },
   logoBackground: {
     width: 120,
@@ -266,18 +244,23 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 48,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
+    fontSize: 34,
+    fontWeight: '700',
     color: 'white',
-    marginBottom: 8,
+    marginBottom: 12,
+    fontFamily: 'System',
+    letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: 16,
-    color: 'rgba(255,255,255,0.8)',
+    fontSize: 17,
+    color: 'rgba(255,255,255,0.85)',
     textAlign: 'center',
+    fontFamily: 'System',
+    fontWeight: '400',
+    lineHeight: 24,
   },
   formContainer: {
     marginBottom: 20,
@@ -296,17 +279,19 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     marginLeft: 12,
-    fontSize: 16,
+    fontSize: 17,
     color: 'white',
+    fontFamily: 'System',
   },
   forgotPassword: {
     alignSelf: 'flex-end',
     marginBottom: 24,
   },
   forgotPasswordText: {
-    color: 'rgba(255,255,255,0.8)',
-    fontSize: 14,
+    color: 'rgba(255,255,255,0.85)',
+    fontSize: 15,
     fontWeight: '500',
+    fontFamily: 'System',
   },
   loginButton: {
     marginBottom: 24,
@@ -321,8 +306,10 @@ const styles = StyleSheet.create({
   },
   loginButtonText: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '600',
+    fontFamily: 'System',
+    letterSpacing: -0.2,
   },
   loadingContainer: {
     flexDirection: 'row',
@@ -339,9 +326,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.3)',
   },
   dividerText: {
-    color: 'rgba(255,255,255,0.6)',
-    fontSize: 14,
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 15,
     marginHorizontal: 16,
+    fontFamily: 'System',
+    fontWeight: '500',
   },
   socialContainer: {
     flexDirection: 'row',
@@ -372,12 +361,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
   },
   footerText: {
-    color: 'rgba(255,255,255,0.8)',
-    fontSize: 16,
+    color: 'rgba(255,255,255,0.85)',
+    fontSize: 17,
+    fontFamily: 'System',
+    fontWeight: '400',
   },
   signupLink: {
     color: 'white',
     fontWeight: '600',
-    textDecorationLine: 'underline',
+    fontFamily: 'System',
+    letterSpacing: -0.2,
   },
 });

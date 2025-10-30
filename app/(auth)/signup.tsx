@@ -106,15 +106,7 @@ export default function SignupScreen() {
       />
 
       {/* Header */}
-      <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <BlurView intensity={20} tint="light" style={styles.backButtonBlur}>
-            <IconSymbol name="arrow.left" size={24} color="white" />
-          </BlurView>
-        </TouchableOpacity>
+      <View style={[styles.header, { paddingTop: insets.top + 40 }]}>
       </View>
 
       <ScrollView 
@@ -310,33 +302,19 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   header: {
-    paddingHorizontal: 20,
-  },
-  backButton: {
-    width: 44,
-    height: 44,
-  },
-  backButtonBlur: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 24,
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    paddingHorizontal: 30,
+    paddingHorizontal: 32,
     paddingBottom: 20,
   },
   logoContainer: {
     alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 30,
+    marginTop: 10,
+    marginBottom: 40,
   },
   logoBackground: {
     width: 100,
@@ -349,18 +327,23 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: 40,
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
+    fontSize: 34,
+    fontWeight: '700',
     color: 'white',
-    marginBottom: 8,
+    marginBottom: 12,
+    fontFamily: 'System',
+    letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: 16,
-    color: 'rgba(255,255,255,0.8)',
+    fontSize: 17,
+    color: 'rgba(255,255,255,0.85)',
     textAlign: 'center',
+    fontFamily: 'System',
+    fontWeight: '400',
+    lineHeight: 24,
   },
   formContainer: {
     marginBottom: 20,
@@ -379,8 +362,9 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     marginLeft: 12,
-    fontSize: 16,
+    fontSize: 17,
     color: 'white',
+    fontFamily: 'System',
   },
   termsContainer: {
     flexDirection: 'row',
@@ -405,14 +389,17 @@ const styles = StyleSheet.create({
   },
   termsText: {
     flex: 1,
-    color: 'rgba(255,255,255,0.8)',
-    fontSize: 14,
-    lineHeight: 20,
+    color: 'rgba(255,255,255,0.85)',
+    fontSize: 15,
+    lineHeight: 22,
+    fontFamily: 'System',
+    fontWeight: '400',
   },
   termsLink: {
     color: 'white',
     fontWeight: '600',
-    textDecorationLine: 'underline',
+    fontFamily: 'System',
+    letterSpacing: -0.2,
   },
   signupButton: {
     marginBottom: 24,
