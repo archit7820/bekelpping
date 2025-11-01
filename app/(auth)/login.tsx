@@ -20,6 +20,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -27,6 +28,7 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const insets = useSafeAreaInsets();
+  const { login, hasCompletedOnboarding } = useAuth();
   
   const buttonScale = useSharedValue(1);
   const formOpacity = useSharedValue(0);
@@ -53,12 +55,27 @@ export default function LoginScreen() {
     setIsLoading(true);
     buttonScale.value = withSpring(0.95);
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      console.log('🔑 Starting login with backend API...');
+      const result = await login(email, password);
+      
+      if (result.success) {
+        // Check if user has completed onboarding
+        if (hasCompletedOnboarding) {
+          router.replace('/(tabs)');
+        } else {
+          router.replace('/(auth)/preferences');
+        }
+      } else {
+        Alert.alert('Login Failed', result.error || 'Invalid credentials');
+      }
+    } catch (error) {
+      console.error('❌ Login error:', error);
+      Alert.alert('Error', 'Network error occurred. Please try again.');
+    } finally {
       setIsLoading(false);
       buttonScale.value = withSpring(1);
-      router.replace('/(auth)/preferences');
-    }, 1500);
+    }
   };
 
   const handleSocialLogin = (provider: string) => {

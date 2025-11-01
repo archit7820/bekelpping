@@ -1,4 +1,4 @@
-import { StyleSheet, Platform, TouchableOpacity, ScrollView, View } from 'react-native';
+import { StyleSheet, Platform, TouchableOpacity, ScrollView, View, Alert } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BlurView } from 'expo-blur';
@@ -6,9 +6,147 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { router } from 'expo-router';
 import React from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function SettingsModal() {
   const insets = useSafeAreaInsets();
+  const { logout, checkAuthStatus } = useAuth();
+
+  const clearAllStorage = async () => {
+    Alert.alert(
+      '🗑️ Clear All Storage',
+      'This will log you out and reset the app to initial state. Are you sure?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Clear All',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const keys = await AsyncStorage.getAllKeys();
+              await AsyncStorage.clear();
+              await checkAuthStatus();
+              
+              Alert.alert(
+                'Storage Cleared',
+                `Cleared ${keys.length} items. App will reset to onboarding.`,
+                [{ text: 'OK', onPress: () => router.replace('/') }]
+              );
+            } catch (error) {
+              Alert.alert('Error', `Failed to clear storage: ${error.message}`);
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const clearAuthOnly = async () => {
+    Alert.alert(
+      '🔑 Clear Auth Data',
+      'This will log you out but preserve other app data. Continue?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Clear Auth',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await AsyncStorage.multiRemove(['userToken', 'hasCompletedOnboarding']);
+              await checkAuthStatus();
+              
+              Alert.alert(
+                'Auth Cleared',
+                'Authentication data cleared. Redirecting to onboarding.',
+                [{ text: 'OK', onPress: () => router.replace('/') }]
+              );
+            } catch (error) {
+              Alert.alert('Error', `Failed to clear auth: ${error.message}`);
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const viewStorage = async () => {
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+      const items = await AsyncStorage.multiGet(keys);
+      
+      const storageData = items
+        .map(([key, value]) => `${key}: ${value?.substring(0, 50)}${value?.length > 50 ? '...' : ''}`)
+        .join('\n\n');
+      
+      Alert.alert(
+        '👀 Current Storage',
+        storageData || 'Storage is empty',
+        [{ text: 'OK' }]
+      );
+    } catch (error) {
+      Alert.alert('Error', `Failed to read storage: ${error.message}`);
+    }
+  };
+
+  const testBackendConnection = async () => {
+    Alert.alert(
+      '🔌 Testing Backend Connection',
+      'Testing connection to your backend...',
+      [{ text: 'OK' }]
+    );
+    
+    try {
+      // Import API config to get the URL
+      const { API_URL } = await import('@/config/api');
+      
+      console.log(`🧪 Testing connection to: ${API_URL}`);
+      console.log(`📱 Platform: ${Platform.OS}`);
+      
+      // Test basic connectivity - try root endpoint since we know it exists
+      const response = await fetch(`${API_URL}/`, {
+        method: 'GET',
+        timeout: 8000,
+      });
+      
+      console.log(`📥 Response status: ${response.status}`);
+      
+      if (response.status === 404) {
+        // 404 is expected - means server is reachable!
+        Alert.alert(
+          '✅ Connection SUCCESS!',
+          `Backend is reachable from your phone!\n\nURL: ${API_URL}\nStatus: ${response.status} (Expected)\n\nYour app should now work with the backend. The auth endpoints just need to be implemented.`,
+          [{ text: 'Excellent!' }]
+        );
+      } else if (response.ok) {
+        Alert.alert(
+          '✅ Connection Success',
+          `Backend is reachable!\nURL: ${API_URL}\nStatus: ${response.status}`,
+          [{ text: 'Great!' }]
+        );
+      } else {
+        Alert.alert(
+          '⚠️ Partial Success',
+          `Backend responded but with status: ${response.status}\nURL: ${API_URL}`,
+          [{ text: 'OK' }]
+        );
+      }
+    } catch (error) {
+      console.error('❌ Backend connection test failed:', error);
+      
+      let message = `Cannot connect to backend from your phone.\n\nURL: ${API_URL}\nError: ${error.message}\n\n`;
+      
+      if (error.message === 'Network request failed') {
+        message += `Troubleshooting for Physical Device:\n\n`;
+        message += `1. Make sure computer and phone are on same WiFi\n`;
+        message += `2. Check computer's firewall settings\n`;
+        message += `3. Try: curl https://kelp-backend.onrender.com from another device\n`;
+        message += `4. Ensure backend is listening on 0.0.0.0:5000 not just localhost`;
+      }
+      
+      Alert.alert('❌ Connection Failed', message, [{ text: 'OK' }]);
+    }
+  };
 
   const SettingsSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
     <View>
@@ -122,6 +260,33 @@ export default function SettingsModal() {
             title="About"
             subtitle="App version and information"
             onPress={() => console.log('About pressed')}
+          />
+        </SettingsSection>
+
+        <SettingsSection title="🧪 Testing Tools">
+          <SettingsItem
+            icon="wifi"
+            title="Test Backend Connection"
+            subtitle="Check if backend on port 5000 is reachable"
+            onPress={testBackendConnection}
+          />
+          <SettingsItem
+            icon="eye"
+            title="View Storage"
+            subtitle="See what's stored in AsyncStorage"
+            onPress={viewStorage}
+          />
+          <SettingsItem
+            icon="key"
+            title="Clear Auth Only"
+            subtitle="Clear authentication but keep other data"
+            onPress={clearAuthOnly}
+          />
+          <SettingsItem
+            icon="trash"
+            title="Clear All Storage"
+            subtitle="Reset app to initial state (for testing)"
+            onPress={clearAllStorage}
           />
         </SettingsSection>
 

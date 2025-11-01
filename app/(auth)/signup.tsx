@@ -21,6 +21,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function SignupScreen() {
   const [formData, setFormData] = useState({
@@ -34,6 +35,7 @@ export default function SignupScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const insets = useSafeAreaInsets();
+  const { signup } = useAuth();
   
   const buttonScale = useSharedValue(1);
   const formOpacity = useSharedValue(0);
@@ -81,12 +83,53 @@ export default function SignupScreen() {
     setIsLoading(true);
     buttonScale.value = withSpring(0.95);
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      console.log('📝 Starting signup with backend API...');
+      const result = await signup(fullName, email, password, confirmPassword);
+      
+      if (result.success) {
+        if (result.message && result.message.includes('verification')) {
+          // Supabase email verification flow
+          Alert.alert(
+            'Check Your Email! 📧',
+            result.message,
+            [
+              { 
+                text: 'Resend Email', 
+                style: 'default',
+                onPress: () => {
+                  // Could implement resend functionality here
+                  console.log('Resend verification email');
+                }
+              },
+              { 
+                text: 'I\'ll Check Later', 
+                style: 'cancel',
+                onPress: () => router.replace('/(auth)/login')
+              }
+            ]
+          );
+        } else {
+          // Traditional flow with immediate token
+          Alert.alert(
+            'Account Created! 🎉',
+            'Your account has been created successfully!',
+            [{ text: 'Continue', onPress: () => router.replace('/(auth)/preferences') }]
+          );
+        }
+      } else {
+        Alert.alert(
+          'Signup Failed', 
+          result.error || 'Failed to create account. Please check your internet connection and try again.'
+        );
+      }
+    } catch (error) {
+      console.error('❌ Signup error:', error);
+      Alert.alert('Error', 'Network error occurred. Please try again.');
+    } finally {
       setIsLoading(false);
       buttonScale.value = withSpring(1);
-      router.replace('/(auth)/preferences');
-    }, 1500);
+    }
   };
 
   const handleSocialSignup = (provider: string) => {

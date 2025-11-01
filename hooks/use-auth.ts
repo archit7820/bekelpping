@@ -1,12 +1,6 @@
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  interests: string[];
-}
+import { authService, User } from '@/services/auth-service';
 
 interface AuthState {
   user: User | null;
@@ -53,60 +47,85 @@ export const useAuth = () => {
 
   const login = async (email: string, password: string) => {
     try {
-      // Simulate API call
-      const user: User = {
-        id: '1',
-        name: 'Sarah Johnson',
-        email,
-        interests: [],
-      };
-
-      await AsyncStorage.setItem('userToken', JSON.stringify(user));
-      setAuthState(prev => ({
-        ...prev,
-        user,
-        isAuthenticated: true,
-      }));
-
-      return { success: true };
+      console.log('🔑 Starting login process for:', email);
+      
+      const result = await authService.login({ email, password });
+      
+      if (result.success && result.user) {
+        setAuthState(prev => ({
+          ...prev,
+          user: result.user!,
+          isAuthenticated: true,
+        }));
+        
+        console.log('✅ Login successful, user authenticated');
+        return { success: true };
+      } else {
+        console.log('❌ Login failed:', result.error);
+        return { success: false, error: result.error || 'Login failed' };
+      }
     } catch (error) {
-      return { success: false, error: 'Login failed' };
+      console.error('❌ Login error:', error);
+      return { success: false, error: 'Network error occurred' };
     }
   };
 
-  const signup = async (name: string, email: string, password: string) => {
+  const signup = async (name: string, email: string, password: string, confirmPassword: string) => {
     try {
-      // Simulate API call
-      const user: User = {
-        id: '1',
-        name,
-        email,
-        interests: [],
-      };
-
-      await AsyncStorage.setItem('userToken', JSON.stringify(user));
-      setAuthState(prev => ({
-        ...prev,
-        user,
-        isAuthenticated: true,
-      }));
-
-      return { success: true };
+      console.log('📝 Starting signup process for:', email);
+      
+      const result = await authService.signup({ name, email, password, confirmPassword });
+      
+      if (result.success) {
+        if (result.user) {
+          // Update auth state with user info
+          setAuthState(prev => ({
+            ...prev,
+            user: result.user!,
+            isAuthenticated: true,
+          }));
+          
+          console.log('✅ Signup successful, user authenticated');
+        }
+        
+        // Return full result including message for verification flows
+        return { 
+          success: true, 
+          message: result.message,
+          requiresVerification: result.message?.includes('verification')
+        };
+      } else {
+        console.log('❌ Signup failed:', result.error);
+        return { success: false, error: result.error || 'Signup failed' };
+      }
     } catch (error) {
-      return { success: false, error: 'Signup failed' };
+      console.error('❌ Signup error:', error);
+      return { success: false, error: 'Network error occurred' };
     }
   };
 
   const logout = async () => {
     try {
-      await AsyncStorage.removeItem('userToken');
+      console.log('🚪 Starting logout process');
+      
+      await authService.logout();
       setAuthState(prev => ({
         ...prev,
         user: null,
         isAuthenticated: false,
+        hasCompletedOnboarding: false,
       }));
+      
+      console.log('✅ Logout successful');
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error('❌ Logout failed:', error);
+      // Force local logout even if backend call fails
+      setAuthState(prev => ({
+        ...prev,
+        user: null,
+        isAuthenticated: false,
+        hasCompletedOnboarding: false,
+      }));
     }
   };
 
@@ -124,6 +143,31 @@ export const useAuth = () => {
 
   const updateUserInterests = async (interests: string[]) => {
     try {
+      console.log('🎯 Updating user interests:', interests);
+      
+      const result = await authService.updateUserInterests(interests);
+      
+      if (result.success && result.user) {
+        setAuthState(prev => ({
+          ...prev,
+          user: result.user!,
+        }));
+        console.log('✅ User interests updated successfully');
+      } else {
+        console.error('❌ Failed to update interests:', result.error);
+        // Fallback to local update if backend fails
+        if (authState.user) {
+          const updatedUser = { ...authState.user, interests };
+          await AsyncStorage.setItem('userToken', JSON.stringify(updatedUser));
+          setAuthState(prev => ({
+            ...prev,
+            user: updatedUser,
+          }));
+        }
+      }
+    } catch (error) {
+      console.error('❌ Failed to update user interests:', error);
+      // Fallback to local update
       if (authState.user) {
         const updatedUser = { ...authState.user, interests };
         await AsyncStorage.setItem('userToken', JSON.stringify(updatedUser));
@@ -132,8 +176,6 @@ export const useAuth = () => {
           user: updatedUser,
         }));
       }
-    } catch (error) {
-      console.error('Failed to update user interests:', error);
     }
   };
 
